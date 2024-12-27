@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 
-import connectDB from './database/db.connection.js';
+import connectDB from './src/database/db.connection.js';
 import { doctorRoutes } from './src/routes/doctor.route.js';
 
 dotenv.config();
