@@ -1,6 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
 
 const slotSchema = new Schema({
+  doctorId: {
+    type: String,
+    required: true,
+  },
   patientName: {
     type: String,
     required: true,
@@ -12,6 +16,7 @@ const slotSchema = new Schema({
   patientPhone: {
     type: String,
     required: true,
+    index: true,
   },
   visitingTime: {
     type: Date,
@@ -20,7 +25,7 @@ const slotSchema = new Schema({
   status: {
     type: String,
     enum: ['booked', 'cancelled', 'completed', 'missed'],
-    default: 'pending',
+    default: 'booked',
   },
   slotNumber: {
     type: Number,
