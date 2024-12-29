@@ -22,14 +22,26 @@ const doctorSchema = new Schema({
     required: true,
   },
   slots: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Slot',
+    status: {
+      type: String,
+      enum: ['available', 'booked'],
+      default: 'available',
+    },
+    visitingTime: {
+      type: String, // or Date if you want to store it as a date
+      required: true,
+    },
+    slotId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Slot',
+    },
   }],
   maxSlots: {
     type: Number,
     default: 10,
   },
 }, { timestamps: true });
+
 
 export const Doctor = mongoose.model('Doctor', doctorSchema);
 
