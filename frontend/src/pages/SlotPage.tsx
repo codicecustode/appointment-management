@@ -9,11 +9,13 @@ const SlotsPage = () => {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const { doctorId } = useParams();
   const { isLoading, error, data } = useSlot(doctorId || '');
-
+  
+  const slots = data?.slots;
+  
   const navigate = useNavigate();
   const handleBook = (selectedSlot: Slot | null) => {
     const slotNumber = selectedSlot?.slotNumber;
-    const slotTime = selectedSlot?.time;
+    const slotTime = selectedSlot?.visitingTime;
     
     if (selectedSlot) {
       navigate(`/doctors/${doctorId}/slots/${slotNumber}/fill-details`, {
@@ -29,15 +31,15 @@ const SlotsPage = () => {
   if (error) {
     return <h1>{error.message}</h1>;
   }
-  console.log('check',selectedSlot);
-
+  //console.log(slots);
+ 
   return (
     <div className="container">
       <h1>Slots detils</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {data?.map((slot) => (
+        {slots.map((slot: Slot) => (
           <SlotCard
-            key={slot.id}
+            key={slot.slotNumber}
             slot={slot as Slot}
             selectedSlot={selectedSlot}
             setSelectedSlot={setSelectedSlot}
