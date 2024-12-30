@@ -1,6 +1,6 @@
 export interface Slot {
   id: number;
-  time: string;
+  visitingTime: string;
   slotNumber: number;
   status: 'available' | 'booked';
 }
