@@ -17,7 +17,7 @@ const SlotCard: React.FC<SlotCardProps> = ({ slot, selectedSlot, setSelectedSlot
     <div
       className={`relative w-32 h-20 p-2 m-2 rounded-lg shadow-md cursor-pointer 
         ${isBooked ? 'bg-red-400' : 'bg-green-500 '}
-        ${isCurrSlotSelected ? 'bg-red-400' : 'bg-green-500 hover:bg-green-600'}`}
+        ${isCurrSlotSelected ? 'bg-red-400' : 'bg-green-500 '}`}
       onClick={() => !isBooked && setSelectedSlot(slot)}
     >
       {/* Tooltip Container */}
@@ -31,7 +31,7 @@ const SlotCard: React.FC<SlotCardProps> = ({ slot, selectedSlot, setSelectedSlot
 
       {/* Slot Content */}
       <div className="text-center text-white font-semibold">
-        <div>{slot.time}</div>
+        <div>{slot.visitingTime}</div>
         <div className="text-sm">{`Slot #${slot.slotNumber}`}</div>
       </div>
     </div>

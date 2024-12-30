@@ -68,7 +68,7 @@ const BookSlotForm: React.FC<FormProps> = ({ formData, setFormData, onSubmit }) 
         <div>
           <label className="block text-sm font-medium text-gray-700">Visiting Time</label>
           <input
-            type="datetime-local"
+            type="text"
             name="visitingTime"
             value={formData.visitingTime}
             readOnly // Fixed value
