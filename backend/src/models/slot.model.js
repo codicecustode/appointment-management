@@ -19,7 +19,7 @@ const slotSchema = new Schema({
     index: true,
   },
   visitingTime: {
-    type: Date,
+    type: String,
     required: true,
   },
   status: {
