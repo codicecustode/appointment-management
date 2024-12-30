@@ -31,6 +31,10 @@ const doctorSchema = new Schema({
       type: String, // or Date if you want to store it as a date
       required: true,
     },
+    slotNumber: {
+      type: Number, // Added slotNumber field
+      required: true,
+    },
     slotId: {
       type: Schema.Types.ObjectId,
       ref: 'Slot',
