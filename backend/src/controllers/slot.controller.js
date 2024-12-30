@@ -1,15 +1,18 @@
 import { Slot } from '../models/slot.model.js';
 import { Doctor } from '../models/doctor.model.js';
 const createSlot = async (req, res) => {
-  //start a session
+
   const session = await Doctor.startSession();
   try {
-    session.withTransaction(async () => {
+    await session.withTransaction(async () => {
       const { patientName, patientEmail, patientPhone, visitingTime, slotNumber, doctorId } = req.body;
 
       // Validate required fields
       if (!patientName || !patientEmail || !patientPhone || !visitingTime || !slotNumber || !doctorId) {
-        throw new Error('Missing required fields');
+        return res.status(400).json({
+          message: 'All fields are required',
+          slot: {}
+        });
       }
 
       //find the doctor with id doctorId
@@ -17,7 +20,10 @@ const createSlot = async (req, res) => {
 
       //return if doctor not found
       if (!doctor) {
-        throw new Error('Doctor not found');
+        return res.status(404).json({
+          message: 'Doctor not found',
+          slot: {}
+        });
       }
 
       //populate the doctor with slots
@@ -25,16 +31,28 @@ const createSlot = async (req, res) => {
         path: 'slots',
         options: { session }
       });
-
+      //console.log(populatedDoctor.slots, 'populatedDoctor.slots')
       //check if the slot already exists
-      const isSlotExist = populatedDoctor.slots.find(slot => slot.slotNumber === slotNumber);
+      const choosenSlot = populatedDoctor.slots.find(slot => slot.slotNumber === slotNumber);
+      const isChoosenSlotBooked = choosenSlot && choosenSlot.status === 'booked';
+      
+      if (!choosenSlot) {
+        return res.status(404).json({
+          message: 'Slot not found',
+          slot: {}
+        });
+      }
 
-      //return if slot already exists
-      if (isSlotExist) {
-        throw new Error('Slot already booked');
+      if (isChoosenSlotBooked) {
+        console.log('Slot already booked');
+        return res.status(409).json({
+          message: 'Slot already booked',
+          slot: {}
+        });
       }
 
       //create a new slot if slot does not exists
+
       const slot = await new Slot({
         doctorId,
         patientName,
@@ -44,26 +62,42 @@ const createSlot = async (req, res) => {
         slotNumber
       }).save({ session });
 
-      //return created slot if created successfully
-      const createdSlotId = slot._id;
-
-      //push the slot id in doctor's slots array
-      doctor.slots.push(createdSlotId);
+      //update the doctor with the new slot
+      choosenSlot.slotId = slot._id;
+      choosenSlot.status = 'booked';
       await doctor.save({ session });
 
-      return res.status(201).json({
+      return res.status(200).json({
         message: 'Slot created successfully',
         slot
       });
-
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: error.message,
       slot: {}
     });
   } finally {
     session.endSession();
+  }
+}
+
+const getAllSlotsByDoctorId = async (req, res) => {
+  const { doctorId } = req.params;
+  try {
+    const doctor = await Doctor.find({ uniqueId: doctorId }).populate('slots');
+    const allSlotsOfDoctor = doctor[0].slots;
+
+    return res.status(200).json({
+      message: 'All slots fetched successfully',
+      slots: allSlotsOfDoctor
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      slots: [],
+    });
   }
 }
 
@@ -105,5 +139,6 @@ const getAllFreeSlotsOfDoctor = async (req, res) => {
 
 export {
   createSlot,
-  getAllFreeSlotsOfDoctor
+  getAllFreeSlotsOfDoctor,
+  getAllSlotsByDoctorId
 }
