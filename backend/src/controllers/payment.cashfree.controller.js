@@ -1,21 +1,20 @@
-import { Cashfree } from "../config/cashfree.config";
-import { createCashfreeOrder } from "../services/createCashfreeOrder.service";
+import { createCashfreeOrder } from '../services/payment.cashfree.service.js';
 
 const createPaymentSession = async (req, res) => {
 
   try {
 
-    const { booking_id, phone_number, email, amount } = req.body;
-    console.log(booking_id, phone_number, email, amount);
+    const { bookingId, phoneNumber, email, amount } = req.body;
+    console.log(bookingId, phoneNumber, email, amount);
 
     let orderData = {
       "order_amount": `${amount}`,
       "order_currency": "INR",
       "customer_details": {
-        "customer_id": `${booking_id}`,
+        "customer_id": `${bookingId}`,
         "customer_name": "node_sdk_test",
         "customer_email": `${email}`,
-        "customer_phone": `${phone_number}`
+        "customer_phone": `${phoneNumber}`
       },
       "order_meta": {
         "return_url": "https://test.cashfree.com/pgappsdemos/return.php?order_id=order_123"
@@ -27,7 +26,7 @@ const createPaymentSession = async (req, res) => {
 
     return res.status(200).json({
       message: "Payment Session Created",
-      data: response.data
+      payment_session_id: response.payment_session_id
     });
 
 
